@@ -11,8 +11,8 @@ class EmployeeServiceImpl (private val employeeRepository: EmployeeRepository) :
         return employeeRepository.findByIdOrNull(id)
     }
 
-    override fun getAllByDate(sDate: Date, eDate: Date){
-        return mutableListOf(employeeRepository.findAll())
+    override fun findAll(): List<Projects>{
+        return employeeRepository.findAll().toList()
     }
 
     override fun save(employee: Employee) {

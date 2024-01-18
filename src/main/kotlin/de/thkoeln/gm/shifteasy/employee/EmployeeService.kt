@@ -5,7 +5,7 @@ import java.util.UUID
 
 interface EmployeeService{
     fun findById(id: UUID): Employee?
-    fun getAllByDate(sDate: Date, eDate: Date): MutableList<Employee>
+    fun findAll(): List<Employee>
     fun save(employee: Employee)
     fun delete(employee: Employee)
 }
