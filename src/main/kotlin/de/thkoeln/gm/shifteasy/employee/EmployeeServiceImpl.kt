@@ -23,4 +23,8 @@ class EmployeeServiceImpl (private val employeeRepository: EmployeeRepository) :
     override fun delete(employee: Employee) {
         employeeRepository.delete(employee)
     }
+
+    init {
+        
+    }
 }
