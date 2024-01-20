@@ -1,18 +1,12 @@
 package de.thkoeln.gm.shifteasy.projects
 
-import jakarta.persistence.*
-import java.util.*
-import javax.annotation.processing.Generated
-import org.hiberate.annotations.GenericGenerator
-import kotlin.collections.ArrayList
+import de.thkoeln.gm.shifteasy.AbstractEntity
+import jakarta.persistence.Entity
+
 
 @Entity
-@Table(name="APP_PROJECTS")
-class Projects{
-    @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name="uuid2", strategy = "uuid2")
-    var id: UUID = java.util.UUID.randomUUID()
+class Projects : AbstractEntity() {
+
     var estimated_hours: Int = 0
     var budget: Double = 0.0
     var start_date: String = ""

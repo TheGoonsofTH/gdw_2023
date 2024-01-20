@@ -1,12 +1,10 @@
 package de.thkoeln.gm.shifteasy.employee
 
 import org.springframework.stereotype.Controller
-import jakara.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import java.util.*
-import java.util.Date
 import java.util.UUID
 
 @Controller
@@ -14,7 +12,7 @@ class EmployeeController(private val employeeService: EmployeeService) {
 
     @PostMapping("/employees")
     @ResponseStatus(HttpStatus.CREATED)
-    fun saveEmployee(lohn: Int, stunden: Int, name: String, job: String, response: HttpServletResponse) : Employee {
+    fun saveEmployee(lohn: Int, stunden: Int, name: String, job: String) : Employee {
         val employee = Employee()
         employee.lohn = lohn
         employee.stunden = stunden
@@ -26,7 +24,7 @@ class EmployeeController(private val employeeService: EmployeeService) {
     }
 
     @GetMapping("/employees?start_date={date}&end_date={date}")
-    fun getAllEmployee(){
+    fun getAllEmployee(): List<Employee> {
         return employeeService.findAll()
     }
 

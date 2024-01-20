@@ -1,18 +1,13 @@
 package de.thkoeln.gm.shifteasy.employee
 
+import de.thkoeln.gm.shifteasy.AbstractEntity
 import jakarta.persistence.*
 import java.util.*
-import javax.annotation.processing.Generated
-import org.hiberate.annotations.GenericGenerator
-import kotlin.collections.ArrayList
+import org.hibernate.annotations.GenericGenerator
 
 @Entity
-@Table(name="APP_EMPLOYEE")
-class Employee{
-    @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name="uuid2", strategy = "uuid2")
-    var id: UUID = java.util.UUID.randomUUID()
+class Employee : AbstractEntity() {
+
     var lohn: Int = 0
     var stunden: Int = 0
     var name: String = ""
