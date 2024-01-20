@@ -1,29 +1,29 @@
 package de.thkoeln.gm.shifteasy.employee
 
-import org.springframework.stereotype.Controller
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import java.util.*
 import java.util.UUID
+data class createEmplyeeDTO(val lohn: Int, val stunden: Int, val name: String, val job: String)
 
-@Controller
+@RestController
 class EmployeeController(private val employeeService: EmployeeService) {
 
     @PostMapping("/employees")
     @ResponseStatus(HttpStatus.CREATED)
-    fun saveEmployee(lohn: Int, stunden: Int, name: String, job: String) : Employee {
+    fun saveEmployee(@RequestBody body: createEmplyeeDTO) : Employee {
         val employee = Employee()
-        employee.lohn = lohn
-        employee.stunden = stunden
-        employee.name = name
-        employee.job = job
+        employee.lohn = body.lohn
+        employee.stunden = body.stunden
+        employee.name = body.name
+        employee.job = body.job
         employeeService.save(employee)
 
         return employee
     }
 
-    @GetMapping("/employees?start_date={date}&end_date={date}")
+    @GetMapping("/employees")
     fun getAllEmployee(): List<Employee> {
         return employeeService.findAll()
     }

@@ -5,7 +5,7 @@ import java.util.UUID
 
 interface ProjectsService{
     fun findById(id: UUID): Projects?
-    fun findAllProjects(): List<Projects>
+    fun findAll(): List<Projects>
     fun save(projects: Projects)
     fun delete(projects: Projects)
 }

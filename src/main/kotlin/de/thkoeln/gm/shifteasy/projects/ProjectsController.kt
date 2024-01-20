@@ -1,7 +1,6 @@
 package de.thkoeln.gm.shifteasy.projects
 
 import org.springframework.stereotype.Controller
-import jakara.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
@@ -14,7 +13,7 @@ class ProjectsController(private val projectsService: ProjectsService) {
 
     @PostMapping("/projects")
     @ResponseStatus(HttpStatus.CREATED)
-    fun saveProjects(estimated_hours: Int, budget: Double, start_date: String, end_date: String, response: HttpServletResponse) : Projects {
+    fun saveProjects(estimated_hours: Int, budget: Double, start_date: String, end_date: String) : Projects {
         val projects = Projects()
         projects.estimated_hours = estimated_hours
         projects.budget = budget
@@ -27,12 +26,12 @@ class ProjectsController(private val projectsService: ProjectsService) {
 
     @GetMapping("/projects")
     fun getAllProjects(): List<Projects> {
-        projectsService.findAll()
+        return projectsService.findAll()
     }
 
     @GetMapping("/projects/{id}")
     fun getProjects(id: UUID): Projects {
-        val projects: Projects? = usersService.findById(id)
+        val projects: Projects? = projectsService.findById(id)
         if(projects != null){
             return projects
         } else {
@@ -43,7 +42,7 @@ class ProjectsController(private val projectsService: ProjectsService) {
 
     @PutMapping("/projects/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun updateProjects(id: UUID, estimated_hours: Estimated_Hours, budget: Budget, start_date: Start_Date, end_date: End_Date, status: Status) {
+    fun updateProjects(id: UUID, estimated_hours: Int, budget: Double, start_date: String, end_date: String, status: String) {
         var projects: Projects? = projectsService.findById(id)
         if (projects != null) {
             if (estimated_hours != null) {
@@ -70,7 +69,7 @@ class ProjectsController(private val projectsService: ProjectsService) {
         }
     }
 
-    @DeleteMaping("/projects/{id}")
+    @DeleteMapping("/projects/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun deleteProjects(id: UUID) {
         var projects: Projects? = projectsService.findById(id)

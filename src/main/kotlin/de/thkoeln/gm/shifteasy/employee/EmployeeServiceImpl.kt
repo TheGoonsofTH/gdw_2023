@@ -1,5 +1,6 @@
 package de.thkoeln.gm.shifteasy.employee
 
+import de.thkoeln.gm.shifteasy.projects.Projects
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.util.UUID
@@ -11,7 +12,7 @@ class EmployeeServiceImpl (private val employeeRepository: EmployeeRepository) :
         return employeeRepository.findByIdOrNull(id)
     }
 
-    override fun findAll(): List<Projects>{
+    override fun findAll(): List<Employee>{
         return employeeRepository.findAll().toList()
     }
 
