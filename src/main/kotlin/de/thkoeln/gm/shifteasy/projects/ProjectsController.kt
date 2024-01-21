@@ -1,6 +1,7 @@
 package de.thkoeln.gm.shifteasy.projects
 
 //import org.springframework.stereotype.Controller
+import de.thkoeln.gm.shifteasy.employee.Employee
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
@@ -9,6 +10,7 @@ import java.util.*
 import java.util.Date
 import java.util.UUID
 data class createProjectDTO(val  estimated_hours: Int, val budget: Double, val start_date: Instant, val end_date: Instant, val status: String?)
+data class startProjectDTO(val employee: List<Employee>, val usedBudget: Double)
 
 @RestController
 class ProjectsController(private val projectsService: ProjectsService) {
@@ -32,18 +34,12 @@ class ProjectsController(private val projectsService: ProjectsService) {
     }
 
     @GetMapping("/projects/{id}")
-    fun getProjects(id: UUID): Projects {
-        val projects: Projects? = projectsService.findById(id)
-        if(projects != null){
+    fun getProjects(@PathVariable id: UUID): Projects {
+        var projects = projectsService.findById(id)?:throw ResponseStatusException(HttpStatus.NOT_FOUND)
             return projects
-        } else {
-            throw ResponseStatusException(HttpStatus.NOT_FOUND)
-        }
-
     }
 
     @PutMapping("/projects/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     fun updateProjects(@PathVariable id: UUID, @RequestBody body: createProjectDTO): Projects? {
         var projects = projectsService.findById(id)?:throw ResponseStatusException(HttpStatus.NOT_FOUND)
         projects.estimated_hours = body.estimated_hours
@@ -59,11 +55,9 @@ class ProjectsController(private val projectsService: ProjectsService) {
 
     @DeleteMapping("/projects/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deleteProjects(id: UUID) {
-        var projects: Projects? = projectsService.findById(id)
-        if (projects != null) {
+    fun deleteProjects(@PathVariable id: UUID) {
+        var projects = projectsService.findById(id)?:throw ResponseStatusException(HttpStatus.NOT_FOUND)
             projectsService.delete(projects)
-        }
     }
 
     @DeleteMapping("/projects")
@@ -73,5 +67,14 @@ class ProjectsController(private val projectsService: ProjectsService) {
         for (projects in allProjects) {
             projectsService.delete(projects)
         }
+    }
+    @PostMapping("/projects/{id}")
+    fun startProjects(@PathVariable id: UUID, @RequestBody body: startProjectDTO): Projects {
+        var projects = projectsService.findById(id)?:throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        projects.status = "started"
+        projects.employee = body.employee
+        projects.usedBudget = body.usedBudget
+        projectsService.save(projects)
+        return projects
     }
 }
