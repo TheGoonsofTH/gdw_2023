@@ -2,7 +2,6 @@ package de.thkoeln.gm.shifteasy.generation
 
 import java.time.*
 import java.time.temporal.ChronoUnit
-import kotlin.math.ceil
 
 data class Job(
     val jobTitle: String,
