@@ -6,8 +6,10 @@ import java.util.*
 import org.hibernate.annotations.GenericGenerator
 
 @Entity
-class Employee : AbstractEntity() {
+class Employee  {
 
+    @Id
+    var id: UUID = UUID.randomUUID()
     var lohn: Int = 0
     var stunden: Int = 0
     var name: String = ""

@@ -39,17 +39,17 @@ class EmployeeController(private val employeeService: EmployeeService) {
     }
 
     @PutMapping("/employees/{id}")
-    fun updateEmployeeByID(@PathVariable id:UUID, lohn: Int, stunden: Int, name: String, job: String){
-        var employee: Employee? = employeeService.findById(id)
-        if(employee!= null){
-            if(lohn!=null) employee.lohn = lohn
-            if(stunden!=null) employee.stunden = stunden
-            if(name!=null) employee.name = name
-            if(job!=null) employee.job = job
+    fun updateEmployeeByID(@PathVariable id:UUID, @RequestBody body: createEmplyeeDTO): Employee {
+        var employee = employeeService.findById(id) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
-        }else{
-            throw ResponseStatusException(HttpStatus.NOT_FOUND)
-        }
+        employee.lohn = body.lohn
+        employee.stunden = body.stunden
+        employee.name = body.name
+        employee.job = body.job
+        employeeService.save(employee)
+        return employee
+
+
     }
 
     @DeleteMapping("/employees/{id}")
