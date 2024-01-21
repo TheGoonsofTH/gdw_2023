@@ -1,7 +1,13 @@
 package de.thkoeln.gm.shifteasy.generation
 
+import khttp.get
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import java.time.*
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import java.util.UUID
 
 data class Job(
     val jobTitle: String,
@@ -9,7 +15,7 @@ data class Job(
 )
 
 data class Project(
-    val id: String,
+    val id: UUID,
     val estimatedHours: Int,
     val budget: Int,
     val startDate: Instant,
@@ -33,7 +39,7 @@ data class Festangestellter(
 )
 
 data class Distribution(
-    val projektId: String,
+    val projektId: UUID,
     var usedBudget: Int,
     val estimatedEndDate: Instant,
     val startDate: Instant,
@@ -83,7 +89,21 @@ fun getEstimatedEndDate(
 
     return endDate.plus(remainingHours,ChronoUnit.HOURS)
 }
+@OptIn(ExperimentalSerializationApi::class)
+fun fetchPublicHolidays(startDate: Instant, endDate: Instant): List<PublicHoliday> {
+    val dateFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val startDataFmt = dateFmt.format(startDate)
+    val endDataFmt = dateFmt.format(endDate)
+    val url = "https://openholidaysapi.org/PublicHolidays?countryIsoCode=DE&languageIsoCode=DE&validFrom=$startDataFmt&validTo=$endDataFmt"
+    val response = get(url)
 
+    return if (response.statusCode == 200) {
+        val json = response.text
+        Json.decodeFromString<List<PublicHoliday>>(json)
+    } else {
+        emptyList()
+    }
+}
 
 fun balance(
     project: Project,
@@ -97,7 +117,9 @@ fun balance(
     var monthlyHours = filledUpFest.second.sumOf { it.stundenMonat }
     val monthlyCost = filledUpFest.second.sumOf { it.lohnMonat }
     val sortedFreelancer = freelancer.sortedByDescending { getWorkValue(it) }
-    val estimatedEndDate = getEstimatedEndDate(monthlyHours, project.startDate, project.estimatedHours.toLong())
+    val estimatedEndDateFull = getEstimatedEndDate(monthlyHours, project.startDate, project.estimatedHours.toLong())
+    val holidays = fetchPublicHolidays(project.startDate,estimatedEndDateFull).stream().count()
+    val estimatedEndDate = estimatedEndDateFull.plus(holidays,ChronoUnit.DAYS)
     val tillTime = Duration.between(project.startDate, estimatedEndDate).toHours()
     val result = Distribution(
         projektId = project.id,
