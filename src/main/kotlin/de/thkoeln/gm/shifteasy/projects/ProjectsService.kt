@@ -1,5 +1,7 @@
 package de.thkoeln.gm.shifteasy.projects
 
+import de.thkoeln.gm.shifteasy.employee.Employee
+import java.time.Instant
 import java.util.Date
 import java.util.UUID
 
@@ -8,4 +10,5 @@ interface ProjectsService{
     fun findAll(): List<Projects>
     fun save(projects: Projects)
     fun delete(projects: Projects)
+    fun findInTimeframe(start_date: Instant, end_date: Instant): List<Employee>
 }
