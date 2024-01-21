@@ -17,7 +17,7 @@ class ProjectsServiceImpl (private val projectsRepository: ProjectsRepository,pr
     }
 
     override fun findAll(): List<Projects> {
-        return projectsRepository.findAll().toList();
+        return projectsRepository.findAll().toList()
     }
 
     override fun save(projects: Projects) {
