@@ -31,9 +31,15 @@ class ProjectsServiceImpl(
 
     override fun findInTimeframe(start_date: Instant, end_date: Instant): List<Employee> {
         val projects = projectsRepository
-            .findByStart_dateGreaterThanEqualAndEnd_dateLessThanEqualAndStatus(start_date, end_date, status = "started")
-        val employees = projects
+            .findAll()
+            .toList()
             .stream()
+            .filter{it.start_date.isAfter(start_date)
+                    && it.end_date.isBefore(end_date)
+                    && it.status.equals("started")}
+        projectsRepository.findAll()
+        val employees = projects
+            //.stream()
             .flatMap { it.employee.stream() }
             .map { it.id }
             .toList()
