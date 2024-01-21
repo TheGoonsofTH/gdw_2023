@@ -1,6 +1,6 @@
 package de.thkoeln.gm.shifteasy.projects
 
-import org.springframework.stereotype.Controller
+//import org.springframework.stereotype.Controller
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
@@ -8,12 +8,12 @@ import java.util.*
 import java.util.Date
 import java.util.UUID
 
-@Controller
+@RestController
 class ProjectsController(private val projectsService: ProjectsService) {
 
-    @PostMapping("/projects")
+    @PostMapping("/projects/{estimated_hours}/{budget}/{start_date}/{end_date}")
     @ResponseStatus(HttpStatus.CREATED)
-    fun saveProjects(estimated_hours: Int, budget: Double, start_date: String, end_date: String) : Projects {
+    fun saveProjects(@PathVariable estimated_hours: Int, @PathVariable budget: Double, @PathVariable start_date: String, @PathVariable end_date: String) : Projects {
         val projects = Projects()
         projects.estimated_hours = estimated_hours
         projects.budget = budget
