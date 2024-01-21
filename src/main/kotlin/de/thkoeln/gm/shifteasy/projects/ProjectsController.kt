@@ -77,4 +77,13 @@ class ProjectsController(private val projectsService: ProjectsService) {
             projectsService.delete(projects)
         }
     }
+
+    @DeleteMapping("/projects")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun deleteAllProjects(){
+        var allProjects: List<Projects> = projectsService.findAll()
+        for (projects in allProjects) {
+            projectsService.delete(projects)
+        }
+    }
 }
