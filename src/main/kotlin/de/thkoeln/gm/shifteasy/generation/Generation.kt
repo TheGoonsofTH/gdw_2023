@@ -158,8 +158,8 @@ fun balance(
     var remainingBudget = project.budget
     val sortedFestangestellte = festangestellte.sortedByDescending { it.lohnMonat }
     val filledUpFest = fillArrayTill(sortedFestangestellte, remainingBudget, mutableListOf())
-    var monthlyHours = filledUpFest.second.sumOf { it.stundenMonat }
-    val monthlyCost = filledUpFest.second.sumOf { it.lohnMonat }
+    var monthlyHours = filledUpFest.second.sumOf { it.stundenMonat }+1
+    val monthlyCost = filledUpFest.second.sumOf { it.lohnMonat }+1
     val sortedFreelancer = freelancer.sortedByDescending { getWorkValue(it) }
     val estimatedEndDateFull = getEstimatedEndDate(monthlyHours, project.startDate, project.estimatedHours.toLong())
     val holidays = fetchPublicHolidays(project.startDate, estimatedEndDateFull).stream().count()
