@@ -49,8 +49,7 @@ data class Project(
 
 @Serializable
 data class Freelancer(
-    @Serializable(with = UUIDSerializer::class)
-    val id: UUID,
+    val id: String,
     val lohnStunde: Int,
     val stundenMonat: Int,
     val name: String,
