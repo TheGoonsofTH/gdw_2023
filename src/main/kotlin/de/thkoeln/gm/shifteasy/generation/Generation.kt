@@ -17,7 +17,6 @@ import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.time.temporal.ChronoUnit
 import java.util.*
 
@@ -86,9 +85,9 @@ fun getWorkValue(free: Freelancer): Double {
 
 fun fillArrayTill(
     sortedFestangestellte: List<Festangestellter>,
-    remainingBudget: Int,
+    remainingBudget: Double,
     acc: MutableList<Festangestellter>
-): Pair<Int, List<Festangestellter>> {
+): Pair<Double, List<Festangestellter>> {
     if (sortedFestangestellte.isEmpty()) return Pair(remainingBudget, acc)
 
     val (expensiver, rest) = sortedFestangestellte.first() to sortedFestangestellte.drop(1)
