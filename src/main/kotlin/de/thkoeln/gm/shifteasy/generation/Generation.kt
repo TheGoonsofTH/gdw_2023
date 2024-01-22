@@ -119,12 +119,12 @@ fun getEstimatedEndDate(
     val localStartDate = startDate.atZone(ZoneId.systemDefault()).toLocalDate()
 
     // Calculate the end date by adding the total months to the start date
-    val localEndDate = localStartDate.plusMonths(totalMonths).plus(estimatedHours % monthlyHours,ChronoUnit.HOURS)
+    val localEndDate = localStartDate.plusMonths(totalMonths)
 
     // Convert LocalDate back to Instant
     val endDate = localEndDate.atStartOfDay(ZoneId.systemDefault()).toInstant()
 
-    return endDate
+    return endDate.plus(estimatedHours % monthlyHours,ChronoUnit.HOURS)
 }
 
 @OptIn(ExperimentalSerializationApi::class)
