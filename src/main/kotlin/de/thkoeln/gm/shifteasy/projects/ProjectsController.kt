@@ -1,24 +1,28 @@
 package de.thkoeln.gm.shifteasy.projects
 
-import org.springframework.stereotype.Controller
+//import org.springframework.stereotype.Controller
+import de.thkoeln.gm.shifteasy.employee.Employee
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
+import java.time.Instant
 import java.util.*
 import java.util.Date
 import java.util.UUID
+data class createProjectDTO(val  estimated_hours: Int, val budget: Double, val start_date: Instant, val end_date: Instant, val status: String?)
+data class startProjectDTO(val employee: List<Employee>, val usedBudget: Double)
 
-@Controller
+@RestController
 class ProjectsController(private val projectsService: ProjectsService) {
 
     @PostMapping("/projects")
     @ResponseStatus(HttpStatus.CREATED)
-    fun saveProjects(estimated_hours: Int, budget: Double, start_date: String, end_date: String) : Projects {
+    fun saveProjects(@RequestBody body: createProjectDTO) : Projects {
         val projects = Projects()
-        projects.estimated_hours = estimated_hours
-        projects.budget = budget
-        projects.start_date = start_date
-        projects.end_date = end_date
+        projects.estimated_hours = body.estimated_hours
+        projects.budget = body.budget
+        projects.start_date = body.start_date
+        projects.end_date = body.end_date
         projectsService.save(projects)
 
         return projects
@@ -30,51 +34,47 @@ class ProjectsController(private val projectsService: ProjectsService) {
     }
 
     @GetMapping("/projects/{id}")
-    fun getProjects(id: UUID): Projects {
-        val projects: Projects? = projectsService.findById(id)
-        if(projects != null){
+    fun getProjects(@PathVariable id: UUID): Projects {
+        var projects = projectsService.findById(id)?:throw ResponseStatusException(HttpStatus.NOT_FOUND)
             return projects
-        } else {
-            throw ResponseStatusException(HttpStatus.NOT_FOUND)
-        }
-
     }
 
     @PutMapping("/projects/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun updateProjects(id: UUID, estimated_hours: Int, budget: Double, start_date: String, end_date: String, status: String) {
-        var projects: Projects? = projectsService.findById(id)
-        if (projects != null) {
-            if (estimated_hours != null) {
-                projects.estimated_hours = estimated_hours
-            }
-
-            if (budget != null) {
-                projects.budget = budget
-            }
-
-            if (start_date != null) {
-                projects.start_date = start_date
-            }
-
-            if (end_date != null) {
-                projects.end_date = end_date
-            }
-
-            if (status != null) {
-                projects.status = status
-            }
-        } else {
-            throw ResponseStatusException(HttpStatus.NOT_FOUND)
+    fun updateProjects(@PathVariable id: UUID, @RequestBody body: createProjectDTO): Projects? {
+        var projects = projectsService.findById(id)?:throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        projects.estimated_hours = body.estimated_hours
+        projects.budget = body.budget
+        projects.start_date = body.start_date
+        projects.end_date = body.end_date
+        if (body.status != null) {
+            projects.status = body.status
         }
+        projectsService.save(projects)
+        return projects
     }
 
     @DeleteMapping("/projects/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun deleteProjects(id: UUID) {
-        var projects: Projects? = projectsService.findById(id)
-        if (projects != null) {
+    fun deleteProjects(@PathVariable id: UUID) {
+        var projects = projectsService.findById(id)?:throw ResponseStatusException(HttpStatus.NOT_FOUND)
+            projectsService.delete(projects)
+    }
+
+    @DeleteMapping("/projects")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun deleteAllProjects(){
+        var allProjects: List<Projects> = projectsService.findAll()
+        for (projects in allProjects) {
             projectsService.delete(projects)
         }
+    }
+    @PostMapping("/projects/{id}")
+    fun startProjects(@PathVariable id: UUID, @RequestBody body: startProjectDTO): Projects {
+        var projects = projectsService.findById(id)?:throw ResponseStatusException(HttpStatus.NOT_FOUND)
+        projects.status = "started"
+        projects.employee = body.employee
+        projects.usedBudget = body.usedBudget
+        projectsService.save(projects)
+        return projects
     }
 }
