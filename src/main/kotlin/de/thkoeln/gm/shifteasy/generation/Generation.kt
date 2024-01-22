@@ -74,7 +74,7 @@ data class Distribution(
     val festangestellte: List<Festangestellter>,
     val freelancer: MutableList<Freelancer>
 )
-
+val jsonDecoder = Json {ignoreUnknownKeys = true}
 fun getFeiertageURL(startDate: String, endDate: String) =
     "https://openholidaysapi.org/PublicHolidays?countryIsoCode=DE&languageIsoCode=DE&validFrom=$startDate&validTo=$endDate"
 
@@ -143,7 +143,7 @@ fun fetchPublicHolidays(startDate: Instant, endDate: Instant): List<PublicHolida
 
     return if (response.statusCode() == 200) {
         val json = response.body()
-        Json.decodeFromString<List<PublicHoliday>>(json)
+        jsonDecoder.decodeFromString<List<PublicHoliday>>(json)
     } else {
         emptyList()
     }
