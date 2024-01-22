@@ -17,6 +17,7 @@ import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.time.temporal.ChronoUnit
 import java.util.*
 
@@ -124,7 +125,10 @@ fun getEstimatedEndDate(
 
 @OptIn(ExperimentalSerializationApi::class)
 fun fetchPublicHolidays(startDate: Instant, endDate: Instant): List<PublicHoliday> {
-    val dateFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val dateFmt = DateTimeFormatter
+        .ofPattern("yyyy-MM-dd")
+        .withLocale( Locale.GERMANY )
+        .withZone( ZoneId.systemDefault() );
     val startDataFmt = dateFmt.format(startDate)
     val endDataFmt = dateFmt.format(endDate)
     val url = getFeiertageURL(startDataFmt, endDataFmt)
