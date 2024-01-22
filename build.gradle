@@ -41,6 +41,8 @@ dependencies {
 tasks.withType(KotlinCompile) {
 	kotlinOptions {
 		freeCompilerArgs += '-Xjsr305=strict'
+		freeCompilerArgs += "--add-opens java.base/java.net=ALL.UNNAMED"
+		freeCompilerArgs += "--add-opens java.base/sun.net.www.protocol.https=ALL-UNNAMED"
 		jvmTarget = '17'
 	}
 }
