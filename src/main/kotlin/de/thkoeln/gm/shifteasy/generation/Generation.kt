@@ -4,6 +4,10 @@ import khttp.get
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
@@ -101,10 +105,14 @@ fun fetchPublicHolidays(startDate: Instant, endDate: Instant): List<PublicHolida
     val startDataFmt = dateFmt.format(startDate)
     val endDataFmt = dateFmt.format(endDate)
     val url = getFeiertageURL(startDataFmt, endDataFmt)
-    val response = get(url)
+    val client = HttpClient.newBuilder().build();
+    val request = HttpRequest.newBuilder()
+        .GET()
+        .uri(URI.create(url)).build()
+    val response = client.send(request, HttpResponse.BodyHandlers.ofString())
 
-    return if (response.statusCode == 200) {
-        val json = response.text
+    return if (response.statusCode() == 200) {
+        val json = response.body()
         Json.decodeFromString<List<PublicHoliday>>(json)
     } else {
         emptyList()

@@ -32,22 +32,16 @@ dependencies {
 	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
-	implementation("com.github.jkcclemens:khttp:-SNAPSHOT")
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
+
 tasks.withType(KotlinCompile) {
 	kotlinOptions {
 		freeCompilerArgs += '-Xjsr305=strict'
-		freeCompilerArgs += "--add-opens java.base/java.net=ALL.UNNAMED"
-		freeCompilerArgs += "--add-opens java.base/sun.net.www.protocol.https=ALL-UNNAMED"
 		jvmTarget = '17'
-	}
-	compilerOptions{
-		freeCompilerArgs.add("--add-opens java.base/java.net=ALL.UNNAMED")
-		freeCompilerArgs.add("--add-opens java.base/sun.net.www.protocol.https=ALL-UNNAMED")
 	}
 }
 

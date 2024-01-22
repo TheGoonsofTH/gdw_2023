@@ -14,6 +14,10 @@ import org.springframework.web.server.ResponseStatusException
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 import java.util.*
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 
 data class GenerationRequestSchema(
     val project: Project,
@@ -75,10 +79,15 @@ class GenerationController(private val projectsService: ProjectsService) {
 
     @OptIn(ExperimentalSerializationApi::class)
     fun fetchFreelancers(): List<Freelancer> {
-        val response = get(freeLancerApi)
+        val client = HttpClient.newBuilder().build();
+        val request = HttpRequest.newBuilder()
+            .GET()
+            .uri(URI.create(freeLancerApi)).build()
+        val response = client.send(request,HttpResponse.BodyHandlers.ofString())
 
-        return if (response.statusCode == 200) {
-            val json = response.text
+
+        return if (response.statusCode() == 200) {
+            val json = response.body()
             Json.decodeFromString<List<Freelancer>>(json)
         } else {
             throw ResponseStatusException(HttpStatus.BAD_GATEWAY)
