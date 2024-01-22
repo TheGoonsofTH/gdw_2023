@@ -167,7 +167,7 @@ fun balance(
     val filledUpFest = fillArrayTill(sortedFestangestellte, remainingBudget, mutableListOf())
     var monthlyHours = filledUpFest.second.sumOf { it.stundenMonat }+1
     val monthlyCost = filledUpFest.second.sumOf { it.lohnMonat }+1
-    val sortedFreelancer = freelancer.sortedBy { getWorkValue(it) }
+    var sortedFreelancer = freelancer.sortedBy { getWorkValue(it) }
     val estimatedEndDateFull = getEstimatedEndDate(monthlyHours, project.startDate, project.estimatedHours.toLong())
     val holidays = fetchPublicHolidays(project.startDate, estimatedEndDateFull).stream().count()
     val estimatedEndDate = estimatedEndDateFull.plus(holidays, ChronoUnit.DAYS)
@@ -201,7 +201,8 @@ fun balance(
         var newTillTime = Duration.between(project.startDate, newestimatedEndDate).toHours().coerceAtLeast(0)
 
         while (remainingBudget > 0 && newTillTime > 0) {
-            val free = sortedFreelancer.firstOrNull()
+            val (maybefreee, rest) = sortedFreelancer.firstOrNull() to sortedFreelancer.drop(1)
+            val free = maybefreee
                 ?:throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough freelancer for target date and budget "
                         + ("target_date" to targetDate)
                         + ("budget" to project.budget))
@@ -214,6 +215,7 @@ fun balance(
                     + ("reducedBudget" to reducedBudget))
 
             result.freelancer.add(free)
+            sortedFreelancer = rest
             remainingBudget -= freeCost.toInt()
             monthlyHours += free.stundenMonat * targetDateMonths.toInt()
             newestimatedEndDate = getEstimatedEndDate(
