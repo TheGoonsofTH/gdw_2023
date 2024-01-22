@@ -43,6 +43,10 @@ tasks.withType(KotlinCompile) {
 		freeCompilerArgs += '-Xjsr305=strict'
 		jvmTarget = '17'
 	}
+	compilerOptions{
+		freeCompilerArgs.add("--add-opens java.base/java.net=ALL.UNNAMED")
+		freeCompilerArgs.add("--add-opens java.base/sun.net.www.protocol.https=ALL-UNNAMED")
+	}
 }
 
 tasks.named('test') {
