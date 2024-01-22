@@ -9,6 +9,9 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
+import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
+import org.springframework.web.server.ResponseStatusException
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -143,9 +146,15 @@ fun fetchPublicHolidays(startDate: Instant, endDate: Instant): List<PublicHolida
 
     return if (response.statusCode() == 200) {
         val json = response.body()
-        jsonDecoder.decodeFromString<List<PublicHoliday>>(json)
+       try{
+           return jsonDecoder.decodeFromString<List<PublicHoliday>>(json)
+       }catch(e : Exception){
+           println(e)
+           throw ResponseStatusException(HttpStatus.BAD_GATEWAY,"Invalid Response from Holiday API")
+       }
     } else {
-        emptyList()
+        throw ResponseStatusException(HttpStatus.BAD_GATEWAY,"Invalid Status from Holiday API $url "+response.statusCode())
+
     }
 }
 
@@ -195,19 +204,15 @@ fun balance(
 
         while (remainingBudget > 0 && newTillTime > 0) {
             val free = sortedFreelancer.firstOrNull()
-                ?: throw IllegalArgumentException(
-                    "Not enough freelancer for target date and budget "
-                            + ("target_date" to targetDate)
-                            + ("budget" to project.budget)
-                )
+                ?:throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough freelancer for target date and budget "
+                        + ("target_date" to targetDate)
+                        + ("budget" to project.budget))
 
             val freeCost = free.lohnStunde * free.stundenMonat * targetDateMonths
 
-            if (remainingBudget - freeCost < 0) throw IllegalArgumentException(
-                "Not enough budet for freelancer"
-                        + ("freelancer" to freeCost)
-                        + ("budget" to project.budget)
-            ) // TODO add option overdraw
+            if (remainingBudget - freeCost < 0) throw ResponseStatusException(HttpStatus.BAD_REQUEST,"Not enough budet for freelancer"
+                    + ("freelancer" to freeCost)
+                    + ("budget" to project.budget))
 
             result.freelancer.add(free)
             remainingBudget -= freeCost.toInt()
@@ -224,7 +229,7 @@ fun balance(
         return result
     }
 
-    throw IllegalArgumentException(
+    throw ResponseStatusException(HttpStatus.BAD_REQUEST,
         "Cannot meet target date with budget"
                 + ("target_date" to targetDate)
                 + ("budget" to project.budget)

@@ -79,9 +79,14 @@ class GenerationController(private val projectsService: ProjectsService) {
 
         return if (response.statusCode() == 200) {
             val json = response.body()
+            try {
             Json.decodeFromString<List<Freelancer>>(json)
+            }catch(e : Exception){
+                println(e)
+                throw ResponseStatusException(HttpStatus.BAD_GATEWAY,"Invalid Response from Freelancer API")
+            }
         } else {
-            throw ResponseStatusException(HttpStatus.BAD_GATEWAY)
+            throw ResponseStatusException(HttpStatus.BAD_GATEWAY,"Invalid Status from Freelancer API "+response.statusCode())
         }
     }
 

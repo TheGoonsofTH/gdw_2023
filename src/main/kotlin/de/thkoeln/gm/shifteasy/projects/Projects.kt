@@ -1,6 +1,5 @@
 package de.thkoeln.gm.shifteasy.projects
 
-import de.thkoeln.gm.shifteasy.AbstractEntity
 import de.thkoeln.gm.shifteasy.employee.Employee
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
