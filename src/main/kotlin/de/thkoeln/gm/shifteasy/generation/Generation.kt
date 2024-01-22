@@ -43,7 +43,7 @@ data class Project(
     @Serializable(with = UUIDSerializer::class)
     val id: UUID,
     val estimatedHours: Int,
-    val budget: Int,
+    val budget: Double,
     val startDate: Instant,
     val status: String // Assuming that "status" can have values other than just "created" or "running"
 )
