@@ -28,11 +28,7 @@ data class GenerationRequestSchema(
 data class GenerationRequestSchemaFull(
     val targetDate: Instant
 )
-@Serializable
-data class Comment(
-    val language: String,
-    val text: String
-)
+
 @Serializable
 data class Name(
     val language: String,
@@ -45,7 +41,6 @@ data class Subdivision(
 )
 @Serializable
 data class PublicHoliday(
-    val comment: List<Comment>,
     val endDate: String,
     val id: String,
     val name: List<Name>,
