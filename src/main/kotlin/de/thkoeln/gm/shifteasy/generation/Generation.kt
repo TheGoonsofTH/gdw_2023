@@ -208,9 +208,9 @@ fun balance(
                         + ("target_date" to targetDate)
                         + ("budget" to project.budget))
 
-            val freeCost = free.lohnStunde * free.stundenMonat * targetDateMonths
-
-            if (remainingBudget - freeCost < 0) throw ResponseStatusException(HttpStatus.BAD_REQUEST,"Not enough budet for freelancer"
+            val freeCost = free.lohnStunde * free.stundenMonat * targetDateMonths.toDouble()
+            val reducedBudget = remainingBudget-freeCost;
+            if (reducedBudget < 0) throw ResponseStatusException(HttpStatus.BAD_REQUEST,"Not enough budget for freelancer"
                     + ("freelancer" to freeCost)
                     + ("budget" to project.budget))
 
