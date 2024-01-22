@@ -124,7 +124,7 @@ fun getEstimatedEndDate(
     // Convert LocalDate back to Instant
     val endDate = localEndDate.atStartOfDay(ZoneId.systemDefault()).toInstant()
 
-    return endDate.plus(estimatedHours % monthlyHours,ChronoUnit.HOURS)
+    return endDate
 }
 
 @OptIn(ExperimentalSerializationApi::class)
