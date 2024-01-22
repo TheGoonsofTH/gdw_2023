@@ -93,7 +93,11 @@ fun fillArrayTill(
 
     val (expensiver, rest) = sortedFestangestellte.first() to sortedFestangestellte.drop(1)
 
-    if (remainingBudget <= 0 || remainingBudget < expensiver.lohnMonat) {
+    if(remainingBudget < expensiver.lohnMonat){
+        return fillArrayTill(rest,remainingBudget,acc)
+    }
+
+    if (remainingBudget <= 0 ) {
         return Pair(remainingBudget, acc)
     }
 
