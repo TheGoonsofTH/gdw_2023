@@ -105,6 +105,7 @@ fun getEstimatedEndDate(
     startDate: Instant,
     estimatedHours: Long
 ): Instant {
+    if(monthlyHours <= 0) return startDate;
     val totalMonths = (estimatedHours / monthlyHours).toInt()
 
     // Convert Instant to LocalDate
