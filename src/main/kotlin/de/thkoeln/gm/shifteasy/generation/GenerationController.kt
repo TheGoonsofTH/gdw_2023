@@ -2,6 +2,7 @@ package de.thkoeln.gm.shifteasy.generation
 
 import de.thkoeln.gm.shifteasy.projects.ProjectsService
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.springframework.http.HttpStatus
@@ -27,22 +28,22 @@ data class GenerationRequestSchema(
 data class GenerationRequestSchemaFull(
     val targetDate: Instant
 )
-
+@Serializable
 data class Comment(
     val language: String,
     val text: String
 )
-
+@Serializable
 data class Name(
     val language: String,
     val text: String
 )
-
+@Serializable
 data class Subdivision(
     val code: String,
     val shortName: String
 )
-
+@Serializable
 data class PublicHoliday(
     val comment: List<Comment>,
     val endDate: String,
