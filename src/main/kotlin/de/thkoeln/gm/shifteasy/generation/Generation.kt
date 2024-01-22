@@ -69,7 +69,7 @@ data class Festangestellter(
 data class Distribution(
     @Serializable(with = UUIDSerializer::class)
     val projektId: UUID,
-    var usedBudget: Int,
+    var usedBudget: Double,
     val estimatedEndDate: Instant,
     val startDate: Instant,
     val festangestellte: List<Festangestellter>,
@@ -168,7 +168,7 @@ fun balance(
     val tillTime = Duration.between(project.startDate, estimatedEndDate).toHours()
     val result = Distribution(
         projektId = project.id,
-        usedBudget = monthlyCost,
+        usedBudget = monthlyCost.toDouble(),
         estimatedEndDate = estimatedEndDate,
         startDate = project.startDate,
         festangestellte = filledUpFest.second,
