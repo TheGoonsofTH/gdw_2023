@@ -203,7 +203,11 @@ fun balance(
 
             val freeCost = free.lohnStunde * free.stundenMonat * targetDateMonths
 
-            if (remainingBudget - freeCost < 0) break // TODO add option overdraw
+            if (remainingBudget - freeCost < 0) throw IllegalArgumentException(
+                "Not enough budet for freelancer"
+                        + ("freelancer" to freeCost)
+                        + ("budget" to project.budget)
+            ) // TODO add option overdraw
 
             result.freelancer.add(free)
             remainingBudget -= freeCost.toInt()
