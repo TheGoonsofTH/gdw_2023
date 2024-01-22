@@ -4,14 +4,16 @@ import khttp.get
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import java.time.*
+import java.time.Duration
+import java.time.Instant
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.UUID
+import java.util.*
 
 data class Job(
     val jobTitle: String,
-    val multiplier: Int
+    val multiplier: Double
 )
 
 data class Project(
@@ -23,7 +25,7 @@ data class Project(
 )
 
 data class Freelancer(
-    val id: String,
+    val id: UUID,
     val lohnStunde: Int,
     val stundenMonat: Int,
     val name: String,
@@ -31,7 +33,7 @@ data class Freelancer(
 )
 
 data class Festangestellter(
-    val id: String,
+    val id: UUID,
     val lohnMonat: Int,
     val stundenMonat: Int,
     val name: String,
@@ -47,7 +49,10 @@ data class Distribution(
     val freelancer: MutableList<Freelancer>
 )
 
-fun getWorkValue(free: Freelancer): Int {
+fun getFeiertageURL(startDate: String, endDate: String) =
+    "https://openholidaysapi.org/PublicHolidays?countryIsoCode=DE&languageIsoCode=DE&validFrom=$startDate&validTo=$endDate"
+
+fun getWorkValue(free: Freelancer): Double {
     return free.job.multiplier * free.lohnStunde
 }
 
@@ -87,14 +92,15 @@ fun getEstimatedEndDate(
     val remainingHours = estimatedHours % monthlyHours
 
 
-    return endDate.plus(remainingHours,ChronoUnit.HOURS)
+    return endDate.plus(remainingHours, ChronoUnit.HOURS)
 }
+
 @OptIn(ExperimentalSerializationApi::class)
 fun fetchPublicHolidays(startDate: Instant, endDate: Instant): List<PublicHoliday> {
     val dateFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val startDataFmt = dateFmt.format(startDate)
     val endDataFmt = dateFmt.format(endDate)
-    val url = "https://openholidaysapi.org/PublicHolidays?countryIsoCode=DE&languageIsoCode=DE&validFrom=$startDataFmt&validTo=$endDataFmt"
+    val url = getFeiertageURL(startDataFmt, endDataFmt)
     val response = get(url)
 
     return if (response.statusCode == 200) {
@@ -118,8 +124,8 @@ fun balance(
     val monthlyCost = filledUpFest.second.sumOf { it.lohnMonat }
     val sortedFreelancer = freelancer.sortedByDescending { getWorkValue(it) }
     val estimatedEndDateFull = getEstimatedEndDate(monthlyHours, project.startDate, project.estimatedHours.toLong())
-    val holidays = fetchPublicHolidays(project.startDate,estimatedEndDateFull).stream().count()
-    val estimatedEndDate = estimatedEndDateFull.plus(holidays,ChronoUnit.DAYS)
+    val holidays = fetchPublicHolidays(project.startDate, estimatedEndDateFull).stream().count()
+    val estimatedEndDate = estimatedEndDateFull.plus(holidays, ChronoUnit.DAYS)
     val tillTime = Duration.between(project.startDate, estimatedEndDate).toHours()
     val result = Distribution(
         projektId = project.id,
