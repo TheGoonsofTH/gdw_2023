@@ -212,7 +212,8 @@ fun balance(
             val reducedBudget = remainingBudget-freeCost;
             if (reducedBudget < 0) throw ResponseStatusException(HttpStatus.BAD_REQUEST,"Not enough budget for freelancer"
                     + ("freelancer" to freeCost)
-                    + ("budget" to project.budget))
+                    + ("budget" to project.budget)
+                    + ("reducedBudget" to reducedBudget))
 
             result.freelancer.add(free)
             remainingBudget -= freeCost.toInt()
