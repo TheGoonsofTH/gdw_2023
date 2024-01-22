@@ -4,20 +4,21 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 import java.util.*
-import java.util.UUID
-data class createEmplyeeDTO(val lohn: Int, val stunden: Int, val name: String, val job: String)
+
+data class CreateJobDTO(val title:String, val multiplier:Double)
+data class CreateEmployeeDTO(val lohn: Int, val stunden: Int, val name: String, val job: CreateJobDTO)
 
 @RestController
 class EmployeeController(private val employeeService: EmployeeService) {
 
     @PostMapping("/employees")
     @ResponseStatus(HttpStatus.CREATED)
-    fun saveEmployee(@RequestBody body: createEmplyeeDTO) : Employee {
+    fun saveEmployee(@RequestBody body: CreateEmployeeDTO) : Employee {
         val employee = Employee()
         employee.lohn = body.lohn
         employee.stunden = body.stunden
         employee.name = body.name
-        employee.job = body.job
+        employee.job = Job(body.job.title,body.job.multiplier)
         employeeService.save(employee)
 
         return employee
@@ -39,13 +40,13 @@ class EmployeeController(private val employeeService: EmployeeService) {
     }
 
     @PutMapping("/employees/{id}")
-    fun updateEmployeeByID(@PathVariable id:UUID, @RequestBody body: createEmplyeeDTO): Employee {
-        var employee = employeeService.findById(id) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
+    fun updateEmployeeByID(@PathVariable id:UUID, @RequestBody body: CreateEmployeeDTO): Employee {
+        val employee = employeeService.findById(id) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
 
         employee.lohn = body.lohn
         employee.stunden = body.stunden
         employee.name = body.name
-        employee.job = body.job
+        employee.job = Job(body.job.title,body.job.multiplier)
         employeeService.save(employee)
         return employee
 

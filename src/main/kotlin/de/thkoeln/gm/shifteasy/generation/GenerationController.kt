@@ -67,7 +67,8 @@ class GenerationController(private val projectsService: ProjectsService) {
     fun generateFull(@PathVariable id: UUID, @RequestBody body: GenerationRequestSchemaFull): Distribution {
         val freelancer = fetchFreelancers()
         val projects = projectsService.findById(id) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND)
-        val festangestellte: List<Festangestellter> = listOf()
+        val festangestellte: List<Festangestellter> = projectsService.findInTimeframe(projects.start_date,body.targetDate)
+            .map { Festangestellter(it.id,it.lohn,it.stunden,it.name,Job(it.job.jobTitle,it.job.multiplier)) }
         val project = Project(id,projects.estimated_hours, budget = projects.estimated_hours, startDate = projects.start_date as Instant, status = projects.status)
         return balance(project, festangestellte, freelancer, body.targetDate)
     }

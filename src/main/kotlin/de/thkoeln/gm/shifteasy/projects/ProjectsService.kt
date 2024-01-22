@@ -10,6 +10,5 @@ interface ProjectsService{
     fun findAll(): List<Projects>
     fun save(projects: Projects)
     fun delete(projects: Projects)
-
-    fun findInTimeframe(startDate: Instant, endDate: Instant) : List<Employee>
+    fun findInTimeframe(start_date: Instant, end_date: Instant): List<Employee>
 }

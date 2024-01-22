@@ -31,17 +31,17 @@ class EmployeeServiceImpl (private val employeeRepository: EmployeeRepository) :
         employee1.lohn = 4000
         employee1.stunden = 40
         employee1.name = "Max Musterman"
-        employee1.job = "Javascript Dev"
+        employee1.job = Job("Javascript Dev",0.9)
         employeeRepository.save(employee1)
         employee2.lohn = 4200
         employee2.stunden = 40
         employee2.name = "Hans Gerhard"
-        employee2.job = "Typescript Dev"
+        employee2.job = Job("Typescript Dev",1.1)
         employeeRepository.save(employee2)
         employee3.lohn = 2000
         employee3.stunden = 20
         employee3.name = "Julius Maier"
-        employee3.job = "GDscript Dev"
+        employee3.job = Job("GDscript Dev",1.2)
         employeeRepository.save(employee3)
     }
 }
