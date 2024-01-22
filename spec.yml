@@ -1,0 +1,381 @@
+openapi: "3.0.3"
+info:
+  title: "ShiftEasy API"
+  description: "ShiftEasy API"
+  version: "1.0.0"
+servers:
+  - url: "https://ShiftEasy"
+paths:
+  /projects:
+    get:
+      summary: "GET projects"
+      operationId: "getAllProjects"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Projects"
+    post:
+      summary: "POST projects"
+      operationId: "saveProjects"
+      responses:
+        "201":
+          description: "Created"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Projects"
+  /projects/{id}:
+    get:
+      summary: "GET projects/{id}"
+      operationId: "getProjects"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Projects"
+    put:
+      summary: "PUT projects/{id}"
+      operationId: "updateProjects"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+      responses:
+        "204":
+          description: "No Content"
+    delete:
+      summary: "DELETE projects/{id}"
+      operationId: "deleteProjects"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+      responses:
+        "204":
+          description: "No Content"
+  /employees:
+    get:
+      summary: "GET employees"
+      operationId: "getAllEmployee"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Employee"
+    post:
+      summary: "POST employees"
+      operationId: "saveEmployee"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createEmplyeeDTO"
+        required: true
+      responses:
+        "201":
+          description: "Created"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Employee"
+  /employees/{id}:
+    get:
+      summary: "GET employees/{id}"
+      operationId: "getEmployeeByID"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Employee"
+    put:
+      summary: "PUT employees/{id}"
+      operationId: "updateEmployeeByID"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createEmplyeeDTO"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Employee"
+    delete:
+      summary: "DELETE employees/{id}"
+      operationId: "deleteEmployee"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+      responses:
+        "204":
+          description: "No Content"
+  /generate:
+    post:
+      summary: "POST generate"
+      operationId: "genreate"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerationRequestSchema"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Distribution"
+  /generate/{id}:
+    post:
+      summary: "POST generate/{id}"
+      operationId: "generateFull"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerationRequestSchemaFull"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Distribution"
+components:
+  schemas:
+    Projects:
+      type: "object"
+      properties:
+        estimated_hours:
+          type: "integer"
+          format: "int32"
+        budget:
+          type: "number"
+          format: "double"
+        start_date:
+          type: "string"
+        end_date:
+          type: "string"
+        status:
+          type: "string"
+      required:
+        - "start_date"
+        - "end_date"
+        - "status"
+    Employee:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+        lohn:
+          type: "integer"
+          format: "int32"
+        stunden:
+          type: "integer"
+          format: "int32"
+        name:
+          type: "string"
+        job:
+          type: "string"
+      required:
+        - "id"
+        - "name"
+        - "job"
+    createEmplyeeDTO:
+      type: "object"
+      properties:
+        lohn:
+          type: "integer"
+          format: "int32"
+        stunden:
+          type: "integer"
+          format: "int32"
+        name:
+          type: "string"
+        job:
+          type: "string"
+      required:
+        - "name"
+        - "job"
+    Instant:
+      type: "object"
+      properties: { }
+    Project:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+        estimatedHours:
+          type: "integer"
+          format: "int32"
+        budget:
+          type: "integer"
+          format: "int32"
+        startDate:
+          $ref: "#/components/schemas/Instant"
+        status:
+          type: "string"
+      required:
+        - "id"
+        - "startDate"
+        - "status"
+    Job:
+      type: "object"
+      properties:
+        jobTitle:
+          type: "string"
+        multiplier:
+          type: "integer"
+          format: "int32"
+      required:
+        - "jobTitle"
+    Freelancer:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        lohnStunde:
+          type: "integer"
+          format: "int32"
+        stundenMonat:
+          type: "integer"
+          format: "int32"
+        name:
+          type: "string"
+        job:
+          $ref: "#/components/schemas/Job"
+      required:
+        - "id"
+        - "name"
+        - "job"
+    Festangestellter:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        lohnMonat:
+          type: "integer"
+          format: "int32"
+        stundenMonat:
+          type: "integer"
+          format: "int32"
+        name:
+          type: "string"
+        job:
+          $ref: "#/components/schemas/Job"
+      required:
+        - "id"
+        - "name"
+        - "job"
+    GenerationRequestSchema:
+      type: "object"
+      properties:
+        project:
+          $ref: "#/components/schemas/Project"
+        freelancer:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Freelancer"
+        festangestellte:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Festangestellter"
+        targetDate:
+          $ref: "#/components/schemas/Instant"
+      required:
+        - "project"
+        - "freelancer"
+        - "festangestellte"
+        - "targetDate"
+    Distribution:
+      type: "object"
+      properties:
+        projektId:
+          type: "string"
+          format: "uuid"
+        usedBudget:
+          type: "integer"
+          format: "int32"
+        estimatedEndDate:
+          $ref: "#/components/schemas/Instant"
+        startDate:
+          $ref: "#/components/schemas/Instant"
+        festangestellte:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Festangestellter"
+        freelancer:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Freelancer"
+      required:
+        - "projektId"
+        - "estimatedEndDate"
+        - "startDate"
+        - "festangestellte"
+        - "freelancer"
+    GenerationRequestSchemaFull:
+      type: "object"
+      properties:
+        targetDate:
+          $ref: "#/components/schemas/Instant"
+      required:
+        - "targetDate"
