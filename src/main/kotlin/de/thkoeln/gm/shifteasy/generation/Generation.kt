@@ -113,20 +113,18 @@ fun getEstimatedEndDate(
     estimatedHours: Long
 ): Instant {
     if(monthlyHours <= 0) return startDate;
-    val totalMonths = (estimatedHours / monthlyHours).toInt()
+    val totalMonths = (estimatedHours / monthlyHours)
 
     // Convert Instant to LocalDate
     val localStartDate = startDate.atZone(ZoneId.systemDefault()).toLocalDate()
 
     // Calculate the end date by adding the total months to the start date
-    val localEndDate = localStartDate.plusMonths(totalMonths.toLong())
+    val localEndDate = localStartDate.plusMonths(totalMonths).plus(estimatedHours % monthlyHours,ChronoUnit.HOURS)
 
     // Convert LocalDate back to Instant
     val endDate = localEndDate.atStartOfDay(ZoneId.systemDefault()).toInstant()
-    val remainingHours = estimatedHours % monthlyHours
 
-
-    return endDate.plus(remainingHours, ChronoUnit.HOURS)
+    return endDate
 }
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -169,7 +167,7 @@ fun balance(
     val filledUpFest = fillArrayTill(sortedFestangestellte, remainingBudget, mutableListOf())
     var monthlyHours = filledUpFest.second.sumOf { it.stundenMonat }+1
     val monthlyCost = filledUpFest.second.sumOf { it.lohnMonat }+1
-    val sortedFreelancer = freelancer.sortedByDescending { getWorkValue(it) }
+    val sortedFreelancer = freelancer.sortedBy { getWorkValue(it) }
     val estimatedEndDateFull = getEstimatedEndDate(monthlyHours, project.startDate, project.estimatedHours.toLong())
     val holidays = fetchPublicHolidays(project.startDate, estimatedEndDateFull).stream().count()
     val estimatedEndDate = estimatedEndDateFull.plus(holidays, ChronoUnit.DAYS)
@@ -192,7 +190,7 @@ fun balance(
     val targetDateMonths = Duration.between(project.startDate, targetDate).toDays() / 30 + 1
     val minFestCost = monthlyCost * targetDateMonths
     val minFestHours = monthlyHours * targetDateMonths
-    remainingBudget -= minFestCost.toInt()
+    remainingBudget -= minFestCost
 
     if (remainingBudget > 0) {
         var newestimatedEndDate = getEstimatedEndDate(
