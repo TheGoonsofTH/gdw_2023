@@ -1,8 +1,13 @@
 package de.thkoeln.gm.shifteasy.generation
 
-import khttp.get
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import java.net.URI
 import java.net.http.HttpClient
@@ -15,12 +20,26 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.*
 
+object UUIDSerializer : KSerializer<UUID> {
+    override val descriptor = PrimitiveSerialDescriptor("UUID", PrimitiveKind.STRING)
+
+    override fun deserialize(decoder: Decoder): UUID {
+        return UUID.fromString(decoder.decodeString())
+    }
+
+    override fun serialize(encoder: Encoder, value: UUID) {
+        encoder.encodeString(value.toString())
+    }
+}
+
+@Serializable
 data class Job(
     val jobTitle: String,
     val multiplier: Double
 )
 
 data class Project(
+    @Serializable(with = UUIDSerializer::class)
     val id: UUID,
     val estimatedHours: Int,
     val budget: Int,
@@ -28,7 +47,9 @@ data class Project(
     val status: String // Assuming that "status" can have values other than just "created" or "running"
 )
 
+@Serializable
 data class Freelancer(
+    @Serializable(with = UUIDSerializer::class)
     val id: UUID,
     val lohnStunde: Int,
     val stundenMonat: Int,
@@ -37,6 +58,7 @@ data class Freelancer(
 )
 
 data class Festangestellter(
+    @Serializable(with = UUIDSerializer::class)
     val id: UUID,
     val lohnMonat: Int,
     val stundenMonat: Int,
@@ -45,6 +67,7 @@ data class Festangestellter(
 )
 
 data class Distribution(
+    @Serializable(with = UUIDSerializer::class)
     val projektId: UUID,
     var usedBudget: Int,
     val estimatedEndDate: Instant,

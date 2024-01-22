@@ -1,7 +1,6 @@
 package de.thkoeln.gm.shifteasy.generation
 
 import de.thkoeln.gm.shifteasy.projects.ProjectsService
-import khttp.get
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
 import java.time.Instant
-import java.time.format.DateTimeFormatter
 import java.util.*
 import java.net.URI
 import java.net.http.HttpClient
