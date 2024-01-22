@@ -45,10 +45,7 @@ data class PublicHoliday(
     val id: String,
     val name: List<Name>,
     val nationwide: Boolean,
-    val quality: String,
     val startDate: String,
-    val subdivisions: List<Subdivision>,
-    val type: String
 )
 
 @RestController
